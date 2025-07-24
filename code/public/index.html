@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FoxMini Debug Panel</title>
+    <script src="https://cdn.jsdelivr.net/npm/nipplejs@0.9.0/dist/nipplejs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div id="connection-status"></div>
+
+    <h1>FoxMini Debug Panel</h1>
+    <div class="flex-container" id="sections-container">
+      <section id="section-legs" class="section">
+        <h2 class="section-title">System Control & Data</h2>
+
+        <!-- Toggle Control -->
+        <div
+          style="
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+          "
+        >
+          <label
+            style="
+              display: flex;
+              align-items: center;
+              cursor: pointer;
+              font-size: 12px;
+            "
+          >
+            <input
+              type="checkbox"
+              id="showRawData"
+              onchange="toggleDataView()"
+              style="margin-right: 5px"
+            />
+            Show Raw Data
+          </label>
+        </div>
+
+        <!-- Debug Information -->
+        <div id="debugSection" style="margin-bottom: 15px">
+          <h3 style="margin-bottom: 10px; font-size: 1em">Debug Information</h3>
+          <p>State: <span id="robotState">idle</span></p>
+          <p>Current Position: <span id="currentPosition">init</span></p>
+        </div>
+
+        <!-- Legs Control -->
+        <div id="legsSection" style="margin-bottom: 15px">
+          <h3 style="margin-bottom: 10px; font-size: 1em">Legs Control</h3>
+
+          <div
+            style="
+              margin-bottom: 8px;
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+            "
+          >
+            <p style="margin: 0; font-weight: bold; color: #666">Type:</p>
+            <p
+              id="legsType"
+              style="margin: 0; font-weight: bold; color: #6c757d"
+            >
+              servogroup
+            </p>
+          </div>
+          <div
+            style="
+              margin-bottom: 8px;
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+            "
+          >
+            <p style="margin: 0; font-weight: bold; color: #666">State:</p>
+            <p
+              id="legsState"
+              style="margin: 0; font-weight: bold; color: #007bff"
+            >
+              idle
+            </p>
+          </div>
+
+          <div style="margin-bottom: 8px">
+            <p style="margin: 0; margin-bottom: 2px; font-weight: bold">
+              Servo 0:
+            </p>
+            <div style="display: flex; align-items: center; margin-bottom: 2px">
+              <p style="margin: 0; margin-right: 5px; min-width: 60px">Goal:</p>
+              <input
+                type="range"
+                id="legsGoalServo0"
+                min="0"
+                max="1800"
+                value="0"
+                oninput='updateServo("legs", 0, this.value)'
+                style="flex-grow: 1"
+              />
+              <p
+                id="legsGoalServoValue0"
+                style="
+                  margin: 0;
+                  margin-left: 5px;
+                  min-width: 30px;
+                  text-align: right;
+                "
+              >
+                0
+              </p>
+            </div>
+            <div style="display: flex; align-items: center">
+              <p style="margin: 0; margin-right: 5px; min-width: 60px">Pos:</p>
+              <input
+                type="range"
+                id="legsCurrentServo0"
+                min="0"
+                max="1800"
+                value="0"
+                disabled
+                style="flex-grow: 1"
+              />
+              <p
+                id="legsCurrentServoValue0"
+                style="
+                  margin: 0;
+                  margin-left: 5px;
+                  min-width: 30px;
+                  text-align: right;
+                "
+              >
+                0
+              </p>
+            </div>
+          </div>
+
+          <div style="margin-bottom: 8px">
+            <p style="margin: 0; margin-bottom: 2px; font-weight: bold">
+              Servo 1:
+            </p>
+            <div style="display: flex; align-items: center; margin-bottom: 2px">
+              <p style="margin: 0; margin-right: 5px; min-width: 60px">Goal:</p>
+              <input
+                type="range"
+                id="legsGoalServo1"
+                min="0"
+                max="1800"
+                value="0"
+                oninput='updateServo("legs", 1, this.value)'
+                style="flex-grow: 1"
+              />
+              <p
+                id="legsGoalServoValue1"
+                style="
+                  margin: 0;
+                  margin-left: 5px;
+                  min-width: 30px;
+                  text-align: right;
+                "
+              >
+                0
+              </p>
+            </div>
+            <div style="display: flex; align-items: center">
+              <p style="margin: 0; margin-right: 5px; min-width: 60px">Pos:</p>
+              <input
+                type="range"
+                id="legsCurrentServo1"
+                min="0"
+                max="1800"
+                value="0"
+                disabled
+                style="flex-grow: 1"
+              />
+              <p
+                id="legsCurrentServoValue1"
+                style="
+                  margin: 0;
+                  margin-left: 5px;
+                  min-width: 30px;
+                  text-align: right;
+                "
+              >
+                0
+              </p>
+            </div>
+          </div>
+
+          <div style="margin-bottom: 8px">
+            <p style="margin: 0; margin-bottom: 2px; font-weight: bold">
+              Servo 2:
+            </p>
+            <div style="display: flex; align-items: center; margin-bottom: 2px">
+              <p style="margin: 0; margin-right: 5px; min-width: 60px">Goal:</p>
+              <input
+                type="range"
+                id="legsGoalServo2"
+                min="0"
+                max="1800"
+                value="0"
+                oninput='updateServo("legs", 2, this.value)'
+                style="flex-grow: 1"
+              />
+              <p
+                id="legsGoalServoValue2"
+                style="
+                  margin: 0;
+                  margin-left: 5px;
+                  min-width: 30px;
+                  text-align: right;
+                "
+              >
+                0
+              </p>
+            </div>
+            <div style="display: flex; align-items: center">
+              <p style="margin: 0; margin-right: 5px; min-width: 60px">Pos:</p>
+              <input
+                type="range"
+                id="legsCurrentServo2"
+                min="0"
+                max="1800"
+                value="0"
+                disabled
+                style="flex-grow: 1"
+              />
+              <p
+                id="legsCurrentServoValue2"
+                style="
+                  margin: 0;
+                  margin-left: 5px;
+                  min-width: 30px;
+                  text-align: right;
+                "
+              >
+                0
+              </p>
+            </div>
+          </div>
+
+          <div style="margin-bottom: 8px">
+            <p style="margin: 0; margin-bottom: 2px; font-weight: bold">
+              Servo 3:
+            </p>
+            <div style="display: flex; align-items: center; margin-bottom: 2px">
+              <p style="margin: 0; margin-right: 5px; min-width: 60px">Goal:</p>
+              <input
+                type="range"
+                id="legsGoalServo3"
+                min="0"
+                max="1800"
+                value="0"
+                oninput='updateServo("legs", 3, this.value)'
+                style="flex-grow: 1"
+              />
+              <p
+                id="legsGoalServoValue3"
+                style="
+                  margin: 0;
+                  margin-left: 5px;
+                  min-width: 30px;
+                  text-align: right;
+                "
+              >
+                0
+              </p>
+            </div>
+            <div style="display: flex; align-items: center">
+              <p style="margin: 0; margin-right: 5px; min-width: 60px">Pos:</p>
+              <input
+                type="range"
+                id="legsCurrentServo3"
+                min="0"
+                max="1800"
+                value="0"
+                disabled
+                style="flex-grow: 1"
+              />
+              <p
+                id="legsCurrentServoValue3"
+                style="
+                  margin: 0;
+                  margin-left: 5px;
+                  min-width: 30px;
+                  text-align: right;
+                "
+              >
+                0
+              </p>
+            </div>
+          </div>
+
+          <div style="margin-bottom: 8px">
+            <p style="margin: 0; margin-bottom: 2px; font-weight: bold">
+              Servo 4:
+            </p>
+            <div style="display: flex; align-items: center; margin-bottom: 2px">
+              <p style="margin: 0; margin-right: 5px; min-width: 60px">Goal:</p>
+              <input
+                type="range"
+                id="legsGoalServo4"
+                min="0"
+                max="1800"
+                value="0"
+                oninput='updateServo("legs", 4, this.value)'
+                style="flex-grow: 1"
+              />
+              <p
+                id="legsGoalServoValue4"
+                style="
+                  margin: 0;
+                  margin-left: 5px;
+                  min-width: 30px;
+                  text-align: right;
+                "
+              >
+                0
+              </p>
+            </div>
+            <div style="display: flex; align-items: center">
+              <p style="margin: 0; margin-right: 5px; min-width: 60px">Pos:</p>
+              <input
+                type="range"
+                id="legsCurrentServo4"
+                min="0"
+                max="1800"
+                value="0"
+                disabled
+                style="flex-grow: 1"
+              />
+              <p
+                id="legsCurrentServoValue4"
+                style="
+                  margin: 0;
+                  margin-left: 5px;
+                  min-width: 30px;
+                  text-align: right;
+                "
+              >
+                0
+              </p>
+            </div>
+          </div>
+
+          <div style="margin-bottom: 8px">
+            <p style="margin: 0; margin-bottom: 2px; font-weight: bold">
+              Servo 5:
+            </p>
+            <div style="display: flex; align-items: center; margin-bottom: 2px">
+              <p style="margin: 0; margin-right: 5px; min-width: 60px">Goal:</p>
+              <input
+                type="range"
+                id="legsGoalServo5"
+                min="0"
+                max="1800"
+                value="0"
+                oninput='updateServo("legs", 5, this.value)'
+                style="flex-grow: 1"
+              />
+              <p
+                id="legsGoalServoValue5"
+                style="
+                  margin: 0;
+                  margin-left: 5px;
+                  min-width: 30px;
+                  text-align: right;
+                "
+              >
+                0
+              </p>
+            </div>
+            <div style="display: flex; align-items: center">
+              <p style="margin: 0; margin-right: 5px; min-width: 60px">Pos:</p>
+              <input
+                type="range"
+                id="legsCurrentServo5"
+                min="0"
+                max="1800"
+                value="0"
+                disabled
+                style="flex-grow: 1"
+              />
+              <p
+                id="legsCurrentServoValue5"
+                style="
+                  margin: 0;
+                  margin-left: 5px;
+                  min-width: 30px;
+                  text-align: right;
+                "
+              >
+                0
+              </p>
+            </div>
+          </div>
+
+          <div style="margin-bottom: 8px">
+            <p style="margin: 0; margin-bottom: 2px; font-weight: bold">
+              Servo 6:
+            </p>
+            <div style="display: flex; align-items: center; margin-bottom: 2px">
+              <p style="margin: 0; margin-right: 5px; min-width: 60px">Goal:</p>
+              <input
+                type="range"
+                id="legsGoalServo6"
+                min="0"
+                max="1800"
+                value="0"
+                oninput='updateServo("legs", 6, this.value)'
+                style="flex-grow: 1"
+              />
+              <p
+                id="legsGoalServoValue6"
+                style="
+                  margin: 0;
+                  margin-left: 5px;
+                  min-width: 30px;
+                  text-align: right;
+                "
+              >
+                0
+              </p>
+            </div>
+            <div style="display: flex; align-items: center">
+              <p style="margin: 0; margin-right: 5px; min-width: 60px">Pos:</p>
+              <input
+                type="range"
+                id="legsCurrentServo6"
+                min="0"
+                max="1800"
+                value="0"
+                disabled
+                style="flex-grow: 1"
+              />
+              <p
+                id="legsCurrentServoValue6"
+                style="
+                  margin: 0;
+                  margin-left: 5px;
+                  min-width: 30px;
+                  text-align: right;
+                "
+              >
+                0
+              </p>
+            </div>
+          </div>
+
+          <div style="margin-bottom: 8px">
+            <p style="margin: 0; margin-bottom: 2px; font-weight: bold">
+              Servo 7:
+            </p>
+            <div style="display: flex; align-items: center; margin-bottom: 2px">
+              <p style="margin: 0; margin-right: 5px; min-width: 60px">Goal:</p>
+              <input
+                type="range"
+                id="legsGoalServo7"
+                min="0"
+                max="1800"
+                value="0"
+                oninput='updateServo("legs", 7, this.value)'
+                style="flex-grow: 1"
+              />
+              <p
+                id="legsGoalServoValue7"
+                style="
+                  margin: 0;
+                  margin-left: 5px;
+                  min-width: 30px;
+                  text-align: right;
+                "
+              >
+                0
+              </p>
+            </div>
+            <div style="display: flex; align-items: center">
+              <p style="margin: 0; margin-right: 5px; min-width: 60px">Pos:</p>
+              <input
+                type="range"
+                id="legsCurrentServo7"
+                min="0"
+                max="1800"
+                value="0"
+                disabled
+                style="flex-grow: 1"
+              />
+              <p
+                id="legsCurrentServoValue7"
+                style="
+                  margin: 0;
+                  margin-left: 5px;
+                  min-width: 30px;
+                  text-align: right;
+                "
+              >
+                0
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Raw Data -->
+        <div id="rawDataSection" style="display: none">
+          <h3 style="margin-bottom: 10px; font-size: 1em">Raw Data</h3>
+          <div
+            id="rawDataContainer"
+            style="
+              font-family: monospace;
+              font-size: 10px;
+              background-color: #f5f5f5;
+              padding: 10px;
+              border-radius: 5px;
+              max-height: 200px;
+              overflow-y: auto;
+            "
+          >
+            <p>Waiting for data...</p>
+          </div>
+        </div>
+      </section>
+      <section id="section-joystick" class="section">
+        <h2 class="section-title">Movement Control</h2>
+
+        <!-- Row 1: Walking Joystick Control | Walking Parameters -->
+        <div style="display: flex; gap: 20px; margin-bottom: 20px">
+          <!-- Column 1: Walking Joystick Control -->
+          <div style="flex: 1">
+            <h3 style="margin-bottom: 10px; font-size: 1em">
+              Walking Joystick Control
+            </h3>
+            <div
+              style="
+                width: 200px;
+                height: 200px;
+                border: 1px solid grey;
+                position: relative;
+                margin: 0 auto;
+                overflow: hidden;
+              "
+              id="joystickContainer"
+            ></div>
+          </div>
+
+          <!-- Column 2: Walking Parameters -->
+          <div style="flex: 1">
+            <h3 style="margin-bottom: 10px; font-size: 1em">
+              Walking Parameters
+            </h3>
+
+            <!-- Step Length -->
+            <div style="margin-bottom: 10px">
+              <div
+                style="
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: center;
+                  margin-bottom: 5px;
+                "
+              >
+                <label style="font-size: 12px; font-weight: bold"
+                  >Step Length:</label
+                >
+                <span
+                  id="stepLengthValue"
+                  style="font-size: 12px; font-weight: bold"
+                  >70</span
+                >
+              </div>
+              <input
+                type="range"
+                id="stepLengthSlider"
+                min="10"
+                max="100"
+                value="70"
+                oninput="updateStepLength()"
+                style="width: 100%; height: 20px"
+              />
+            </div>
+
+            <!-- Step Height -->
+            <div style="margin-bottom: 10px">
+              <div
+                style="
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: center;
+                  margin-bottom: 5px;
+                "
+              >
+                <label style="font-size: 12px; font-weight: bold"
+                  >Step Height:</label
+                >
+                <span
+                  id="stepHeightValue"
+                  style="font-size: 12px; font-weight: bold"
+                  >10</span
+                >
+              </div>
+              <input
+                type="range"
+                id="stepHeightSlider"
+                min="1"
+                max="30"
+                value="10"
+                oninput="updateStepHeight()"
+                style="width: 100%; height: 20px"
+              />
+            </div>
+
+            <!-- Step Duration -->
+            <div style="margin-bottom: 10px">
+              <div
+                style="
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: center;
+                  margin-bottom: 5px;
+                "
+              >
+                <label style="font-size: 12px; font-weight: bold"
+                  >Step Duration (ms):</label
+                >
+                <span
+                  id="stepDurationValue"
+                  style="font-size: 12px; font-weight: bold"
+                  >400</span
+                >
+              </div>
+              <input
+                type="range"
+                id="stepDurationSlider"
+                min="200"
+                max="2000"
+                value="2000"
+                step="50"
+                oninput="updateStepDuration()"
+                style="width: 100%; height: 20px"
+              />
+            </div>
+
+            <!-- Walk Height -->
+            <div style="margin-bottom: 10px">
+              <div
+                style="
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: center;
+                  margin-bottom: 5px;
+                "
+              >
+                <label style="font-size: 12px; font-weight: bold"
+                  >Walk Height:</label
+                >
+                <span
+                  id="walkHeightValue"
+                  style="font-size: 12px; font-weight: bold"
+                  >65</span
+                >
+              </div>
+              <input
+                type="range"
+                id="walkHeightSlider"
+                min="40"
+                max="70"
+                value="65"
+                oninput="updateWalkHeight()"
+                style="width: 100%; height: 20px"
+              />
+            </div>
+
+            <!-- X Offset -->
+            <div style="margin-bottom: 10px">
+              <div
+                style="
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: center;
+                  margin-bottom: 5px;
+                "
+              >
+                <label style="font-size: 12px; font-weight: bold"
+                  >X Offset:</label
+                >
+                <span
+                  id="xOffsetValue"
+                  style="font-size: 12px; font-weight: bold"
+                  >0.0</span
+                >
+              </div>
+              <input
+                type="range"
+                id="xOffsetSlider"
+                min="-20"
+                max="20"
+                value="0"
+                step="0.5"
+                oninput="updateXOffset()"
+                style="width: 100%; height: 20px"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Row 2: Walking Controls + Preset Positions | Robot Pose Control -->
+        <div style="display: flex; gap: 20px">
+          <!-- Column 1: Walking Controls + Preset Positions -->
+          <div style="flex: 1">
+            <!-- Walking Controls -->
+            <div style="margin-bottom: 15px">
+              <h3 style="margin-bottom: 10px; font-size: 1em">
+                Walking Controls
+              </h3>
+              <div style="display: flex; gap: 10px; margin-bottom: 10px">
+                <button
+                  onclick="startWalking()"
+                  style="background-color: #4caf50; flex: 1"
+                >
+                  Start Walking
+                </button>
+                <button
+                  onclick="stopWalking()"
+                  style="background-color: #f44336; flex: 1"
+                >
+                  Stop Walking
+                </button>
+              </div>
+              <p
+                id="walkingStatus"
+                style="margin-bottom: 15px; font-weight: bold; color: #666"
+              >
+                Ready
+              </p>
+            </div>
+
+            <!-- Preset Positions -->
+            <div style="margin-bottom: 15px">
+              <h3 style="margin-bottom: 10px; font-size: 1em">
+                Preset Positions
+              </h3>
+              <div style="display: flex; gap: 10px; align-items: center">
+                <select
+                  id="presetSelect"
+                  style="
+                    flex: 1;
+                    padding: 8px;
+                    border: 1px solid #ddd;
+                    border-radius: 4px;
+                  "
+                >
+                  <option value="">Loading...</option>
+                </select>
+                <button
+                  onclick="applyPresetPosition()"
+                  style="
+                    background-color: #2196f3;
+                    padding: 8px 16px;
+                    border: none;
+                    border-radius: 4px;
+                    color: white;
+                    cursor: pointer;
+                  "
+                >
+                  Apply
+                </button>
+              </div>
+              <p
+                id="presetStatus"
+                style="margin-top: 10px; font-weight: bold; color: #666"
+              >
+                Ready
+              </p>
+            </div>
+          </div>
+
+          <!-- Column 2: Robot Pose Control -->
+          <div style="flex: 1">
+            <h3 style="margin-bottom: 10px; font-size: 1em">
+              Robot Pose Control
+            </h3>
+            <div
+              style="
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                width: 100%;
+                margin-bottom: 15px;
+              "
+            >
+              <!-- Height Control -->
+              <div
+                style="
+                  display: flex;
+                  flex-direction: column;
+                  align-items: center;
+                  width: 30%;
+                "
+              >
+                <label
+                  style="margin-bottom: 5px; font-weight: bold; font-size: 12px"
+                  >Height</label
+                >
+                <input
+                  type="range"
+                  id="heightSlider"
+                  min="50"
+                  max="82"
+                  value="66"
+                  step="1"
+                  orient="vertical"
+                  oninput="onHeightChange()"
+                  style="
+                    width: 20px;
+                    height: 120px;
+                    writing-mode: bt-lr;
+                    -webkit-appearance: slider-vertical;
+                  "
+                />
+                <span
+                  id="heightValue"
+                  style="font-weight: bold; font-size: 12px; margin-top: 5px"
+                  >66mm</span
+                >
+              </div>
+
+              <!-- Joystick for Pitch/Roll -->
+              <div
+                style="
+                  display: flex;
+                  flex-direction: column;
+                  align-items: center;
+                  width: 60%;
+                "
+              >
+                <label
+                  style="margin-bottom: 5px; font-weight: bold; font-size: 12px"
+                  >Pitch & Roll</label
+                >
+                <div
+                  id="poseJoystick"
+                  style="
+                    width: 120px;
+                    height: 120px;
+                    border: 2px solid #ddd;
+                    border-radius: 50%;
+                    position: relative;
+                    background: #f8f8f8;
+                  "
+                >
+                  <div
+                    id="poseJoystickKnob"
+                    style="
+                      width: 20px;
+                      height: 20px;
+                      background: #4caf50;
+                      border-radius: 50%;
+                      position: absolute;
+                      top: 50%;
+                      left: 50%;
+                      transform: translate(-50%, -50%);
+                      cursor: pointer;
+                      transition: background 0.2s;
+                    "
+                  ></div>
+                </div>
+                <div
+                  style="
+                    display: flex;
+                    justify-content: space-between;
+                    width: 100%;
+                    margin-top: 5px;
+                  "
+                >
+                  <span
+                    id="pitchValue"
+                    style="font-weight: bold; font-size: 12px"
+                    >0°</span
+                  >
+                  <span
+                    id="rollValue"
+                    style="font-weight: bold; font-size: 12px"
+                    >0°</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="section-ik" class="section">
+        <h2 class="section-title">Inverse Kinematics</h2>
+        <div
+          style="
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+          "
+        >
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              width: 100%;
+              margin-bottom: 10px;
+            "
+          >
+            <div style="display: flex; align-items: center; width: 48%">
+              <p style="margin: 0; margin-right: 5px; min-width: 20px">X:</p>
+              <input
+                type="number"
+                id="x"
+                name="x"
+                value="0"
+                style="width: 50px"
+              />
+            </div>
+            <div style="display: flex; align-items: center; width: 48%">
+              <p style="margin: 0; margin-right: 5px; min-width: 20px">Y:</p>
+              <input
+                type="number"
+                id="y"
+                name="y"
+                value="80"
+                style="width: 50px"
+              />
+            </div>
+          </div>
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              width: 100%;
+              margin-bottom: 10px;
+            "
+          >
+            <div style="display: flex; align-items: center; width: 48%">
+              <p style="margin: 0; margin-right: 5px; min-width: 20px">L1:</p>
+              <p id="l1" style="margin: 0; width: 100%">37</p>
+            </div>
+            <div style="display: flex; align-items: center; width: 48%">
+              <p style="margin: 0; margin-right: 5px; min-width: 20px">L2:</p>
+              <p id="l2" style="margin: 0; width: 100%">45</p>
+            </div>
+          </div>
+          <button onclick="callInverseKinematics()" style="margin-top: 10px">
+            Test IK
+          </button>
+          <p id="ikStatus" style="margin-top: 5px; font-weight: bold">Ready</p>
+          <div style="margin-top: 15px; width: 100%">
+            <canvas
+              id="ikCanvas"
+              width="250"
+              height="250"
+              style="border: 1px solid #ddd; background-color: #f8f8f8"
+            ></canvas>
+          </div>
+        </div>
+      </section>
+    </div>
+    <div class="loader-container" id="loader">
+      <div class="spinner"></div>
+      <div class="loader-text">Connection lost. Trying to reconnect...</div>
+    </div>
+    <script src="scripts.js"></script>
+  </body>
+</html>

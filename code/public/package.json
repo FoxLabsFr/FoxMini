@@ -1,0 +1,21 @@
+{
+  "name": "foxmini-robot-control",
+  "version": "1.0.0",
+  "description": "Web interface for FoxMini robot control",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "keywords": [
+    "robot",
+    "control",
+    "web",
+    "interface"
+  ],
+  "author": "FoxMini",
+  "license": "MIT"
+}

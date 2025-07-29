@@ -3,18 +3,24 @@
 #include <Wire.h>
 #include <ESP8266WiFi.h>
 
-Robot::Robot() : legs(0x40, 8), state(State::Initializing) {}
+Robot::Robot() : legs(), state(State::Initializing) {}
 
 void Robot::init() {
   Serial.println("Initializing robot");
   state = State::Initializing;
 
-  uint8_t legsId[8] = {1, 2, 3, 4, 5, 6, 7, 8};
-  uint16_t legsMin[8] = {150, 150, 150, 150, 150, 150, 150, 150};
-  uint16_t legsMax[8] = {600, 600, 600, 600, 600, 600, 600, 600};
-  short offsetLegs[8] = {-137, 74, -117, -169, -6, 70, 22, 58};
-  int8_t invertLegs[8] = {-1, 1, 1, -1, 1, -1, -1, 1};
-  legs.init(legsMin, legsMax, offsetLegs, invertLegs, legsId);
+  // Initialize with I2C address 0x40 and 8 servos
+  legs.setIds(0x40, {1, 2, 3, 4, 5, 6, 7, 8});
+  legs.setDefaultPosition({900, 900, 900, 900, 900, 900, 900, 900});
+
+  // Optional config
+  legs.setMinPulse({150, 150, 150, 150, 150, 150, 150, 150});
+  legs.setMaxPulse({600, 600, 600, 600, 600, 600, 600, 600});
+  legs.setOffsets({-137, 74, -117, -169, -6, 70, 22, 58});
+  legs.setInverts({-1, 1, 1, -1, 1, -1, -1, 1});
+
+  // Init servo at default position
+  legs.init(Serial);
 
   // set initial position
   applyPresetPosition("init");

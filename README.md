@@ -2,9 +2,6 @@
 
 A 4-legged robot built with ESP8266 (D1 Mini) that you can control over WiFi api and debug web interface.
 
-[![FoxMini Robot](https://img.shields.io/badge/Platform-ESP8266-blue.svg)](https://www.espressif.com/en/products/socs/esp8266)
-[![Framework](https://img.shields.io/badge/Framework-Arduino-green.svg)](https://www.arduino.cc/)
-
 Watch the creation process and demo video:
 
 [![FoxMini Creation Process](https://img.shields.io/badge/YouTube-Watch%20Demo-red.svg)](https://www.youtube.com/watch?v=Um8Rtv28zdM)
